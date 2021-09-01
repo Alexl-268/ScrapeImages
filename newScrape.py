@@ -1,11 +1,8 @@
 import winsound
 import requests
 from bs4 import BeautifulSoup as bs
-import os
-import re
 
 url = 'https://www.lmmpic.com'
-
 
 login = '/wp-login.php'
 header = {
@@ -13,7 +10,6 @@ header = {
     'origin': url,
     'referer': url+login
 }
-
 
 login_payload = {
     'log': 'sdfgkjhg1@gmail.com',
@@ -25,74 +21,46 @@ login_payload = {
 s = requests.session()
 login_req = s.post(url+login, headers=header, data=login_payload)
 print(login_req)
-cookies = login_req.cookies
-count = 1
-th = 1
-skipped = []
+# cookies = login_req.cookies
+
 #                   27/8
-links = [33, 'https://www.lmmpic.com/1024867.html/3', 'https://www.lmmpic.com/1024873.html', 16, 'https://www.lmmpic.com/1024868.html/2',
-         41,'https://www.lmmpic.com/1024870.html/3',  ]
-#----------------------------- Asks for links
-# link = input("Link: ")
-# while (link != 'y'):
-#     links.append(link)
-#     link = input("Link: ")
-# print(links)
-# while (input("Do you want to continue? ") == 'y'):
-#     print("Collecting Images")
-#     break
+links = ['https://www.lmmpic.com/1026882.html/2', 'https://www.lmmpic.com/1026915.html/2', 'https://www.lmmpic.com/1026573.html', 'https://www.lmmpic.com/1026872.html',
+         'https://www.lmmpic.com/1026878.html', 'https://www.lmmpic.com/1026914.html/3', 'https://www.lmmpic.com/1026916.html', 'https://www.lmmpic.com/1026905.html', 'https://www.lmmpic.com/1026883.html/4', ]
 
+def downloadImages(url):
+    pureUrl = url[0:url.find('.html')+5]
+    try :
+        page = int(url[url.find('.html')+6:len(url)])
+    except:
+        page = 1
+    scrapeUrl = s.get(pureUrl+'/'+str(page)).url
+    visited = False
 
-def downloadImages(url, count):
-  #Error Checking
-    global th
-    url = url[0:url.find('.html')+5]
-    #Collecting image html
-    soup = bs(s.get(url).text, 'html.parser')
-    im = soup.find("div", {"class": "single-content"})
-    images = im.findAll('img')
-    titleName = soup.find("h1", {"class": "entry-title"})
-    titleName = titleName.text
+    count = 1
+    while (visited == False):
+        soup = bs(s.get(scrapeUrl).text, 'html.parser')
+        im = soup.find("div", {"class": "single-content"})
+        images = im.findAll('img')
+        titleName = soup.find("h1", {"class": "entry-title"})
+        titleName = titleName.text
 
-    print(titleName)
-    print(images)
+        print('Title------------------------------------------------------------------------------------------------------------------------' + titleName)
+        for image in images:
+            print("collecting " + image['src'])
+            download = requests.get(image['src'])
+            with open('images/'+str(titleName.replace('.', '-')) + '--' + str(count) + ' ('+ url[8:len(url)-1].replace('/', '-') +') ' '.jpg', 'wb') as f:
+                f.write(download.content)
+            count+=1
 
+        page +=1
+        scrapeUrl = s.get(pureUrl+'/'+str(page)).url
+        if (scrapeUrl == pureUrl):
+            visited = True
 
-#start to download from this number of images
 for url in links:
-    if isinstance(url, (int, float)) == True:
-        count = url
-    else:
-        downloadImages(url, count)
-        count = 1
+    downloadImages(url)
 
 
-# print(skipped)
-# duration = 400  # milliseconds
-# freq = 440  # Hz
-# winsound.Beep(freq, duration)
-
-
-# os.system("shutdown /s /t 120")
-
-#Colecting the image links
-# image = images[0]
-# imageLink = image['src']
-
-# if imageLink[imageLink.find('.jpg')-2:imageLink.find('.jpg')] == '-1':
-#      imageLink = imageLink[0:imageLink.find('.jpg')-1]
-#       download = requests.get(imageLink+str(count)+'.jpg')
-
-#        #write the images
-#        while (download.status_code != 404):
-#             print(str(th) + '/' + str(len(links)) +
-#                   '  Collecting ' + str(url) + ' ----- ' + str(count))
-#             with open(str(titleName.replace('.', '-')) + '--' + str(count) + '.jpg', 'wb') as f:
-#                 f.write(download.content)
-
-#             count = count + 1
-#             download = requests.get(imageLink+str(count)+'.jpg')
-
-#         th = th + 1
-# else:
-#     skipped.append(url)
+duration = 400  # milliseconds
+freq = 440  # Hz
+winsound.Beep(freq, duration)
