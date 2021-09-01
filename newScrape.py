@@ -1,3 +1,4 @@
+from os import link
 import winsound
 import requests
 from bs4 import BeautifulSoup as bs
@@ -27,7 +28,7 @@ print(login_req)
 links = ['https://www.lmmpic.com/1026882.html/2', 'https://www.lmmpic.com/1026915.html/2', 'https://www.lmmpic.com/1026573.html', 'https://www.lmmpic.com/1026872.html',
          'https://www.lmmpic.com/1026878.html', 'https://www.lmmpic.com/1026914.html/3', 'https://www.lmmpic.com/1026916.html', 'https://www.lmmpic.com/1026905.html', 'https://www.lmmpic.com/1026883.html/4', ]
 
-def downloadImages(url):
+def downloadImages(url, th):
     pureUrl = url[0:url.find('.html')+5]
     try :
         page = int(url[url.find('.html')+6:len(url)])
@@ -44,11 +45,12 @@ def downloadImages(url):
         titleName = soup.find("h1", {"class": "entry-title"})
         titleName = titleName.text
 
-        print('Title------------------------------------------------------------------------------------------------------------------------' + titleName)
+
+        print('Title------------------------------------------------------------------' + str(th) + ' of ' + str(len(links)) + '------------------------------------------------------------------' + titleName)
         for image in images:
-            print("collecting " + image['src'])
+            print("collecting " + image['src'] + '\t\t\t\t' + str(th) + ' of ' + str(len(links)))
             download = requests.get(image['src'])
-            with open('images/'+str(titleName.replace('.', '-')) + '--' + str(count) + ' ('+ url[8:len(url)-1].replace('/', '-') +') ' '.jpg', 'wb') as f:
+            with open('images/'+str(titleName.replace('.', '-')) + '--' + str(count) + ' ('+ url[8:len(url)].replace('/', '-') +') ' '.jpg', 'wb') as f:
                 f.write(download.content)
             count+=1
 
@@ -57,8 +59,12 @@ def downloadImages(url):
         if (scrapeUrl == pureUrl):
             visited = True
 
+    return th+1
+
+
+count = 1
 for url in links:
-    downloadImages(url)
+    count = downloadImages(url, count)
 
 
 duration = 400  # milliseconds

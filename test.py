@@ -11,7 +11,16 @@
 # # Get multiple values of a key as list
 # print(word_freq['XIUREN秀人网 No.3585 Cherry绯月樱'])
 
-import os
+# import os
 
-with open('images/'+'test.txt', 'wb') as f:
-    f.write('download.content')
+# with open('images/'+'test.txt', 'wb') as f:
+#     f.write('download.content')
+
+count = 1
+
+def downloadImages():
+    global count
+    count = 12
+
+downloadImages()
+print(count)
