@@ -2,6 +2,16 @@ from os import link
 import winsound
 import requests
 from bs4 import BeautifulSoup as bs
+import datetime
+
+updatedDate = ''
+with open('date.txt', 'r+') as f:
+    line = f.readline()
+    line = line.split("/")
+    updatedDate = line[0] + '/' + line[1] + '/' + line[2] + '/'
+userInput = input("Please enter links after date - " + updatedDate + ": ")
+links = userInput.split(", ")
+links = links[0: len(links)-1]
 
 url = 'https://www.lmmpic.com'
 
@@ -9,24 +19,15 @@ login = '/wp-login.php'
 header = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
     'origin': url,
-    'referer': url+login
-}
-
+    'referer': url+login}
 login_payload = {
     'log': 'sdfgkjhg1@gmail.com',
     'pwd': 'l0maNdr@',
     'testcookie': '1',
-    'wp-submit': '登录',
-}
-
+    'wp-submit': '登录',}
 s = requests.session()
 login_req = s.post(url+login, headers=header, data=login_payload)
 print(login_req)
-# cookies = login_req.cookies
-
-#                   27/8
-links = ['https://www.lmmpic.com/1026882.html/2', 'https://www.lmmpic.com/1026915.html/2', 'https://www.lmmpic.com/1026573.html', 'https://www.lmmpic.com/1026872.html',
-         'https://www.lmmpic.com/1026878.html', 'https://www.lmmpic.com/1026914.html/3', 'https://www.lmmpic.com/1026916.html', 'https://www.lmmpic.com/1026905.html', 'https://www.lmmpic.com/1026883.html/4', ]
 
 def downloadImages(url, th):
     pureUrl = url[0:url.find('.html')+5]
@@ -37,16 +38,33 @@ def downloadImages(url, th):
     scrapeUrl = s.get(pureUrl+'/'+str(page)).url
     visited = False
 
+    soup = bs(s.get(scrapeUrl).text, 'html.parser')
+    titleName = soup.find("h1", {"class": "entry-title"})
+    titleName = titleName.text
+    date = soup.find("ul", {"class": "spostinfo"})
+    date = date.text.split(" ")
+    date = date[len(date)-1]
+    date = date.split("/")
+    date[2] = date[2][0:4]
+    d1 = datetime.date(int(date[2]), int(date[1]), int(date[0]))
+
+    with open('date.txt', 'r+') as f:
+        line = f.readline()
+        line = line.split("/")
+        d2 = datetime.date(int(line[2]), int(line[1]), int(line[0]))
+
+        if (d1 > d2):
+            with open('date.txt', 'w') as file:
+                file.write(d1.strftime("%d/%m/%Y"))
+
+
     count = 1
     while (visited == False):
         soup = bs(s.get(scrapeUrl).text, 'html.parser')
         im = soup.find("div", {"class": "single-content"})
         images = im.findAll('img')
-        titleName = soup.find("h1", {"class": "entry-title"})
-        titleName = titleName.text
 
-
-        print('Title------------------------------------------------------------------' + str(th) + ' of ' + str(len(links)) + '------------------------------------------------------------------' + titleName)
+        print('Title-------------------------------------------------------' + str(th) + ' of ' + str(len(links)) + '-------------------------------------------------------' + titleName)
         for image in images:
             print("collecting " + image['src'] + '\t\t\t\t' + str(th) + ' of ' + str(len(links)))
             download = requests.get(image['src'])

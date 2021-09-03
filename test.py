@@ -1,5 +1,5 @@
 # word_freq = {}
-
+import datetime
 # # word_freq = {'is': [1, 3, 4, 8, 10],
 # #              'at': [3, 10, 15, 7, 9],
 # #              'test': [5, 3, 7, 8, 1],
@@ -16,11 +16,25 @@
 # with open('images/'+'test.txt', 'wb') as f:
 #     f.write('download.content')
 
-count = 1
+# count = 1
 
-def downloadImages():
-    global count
-    count = 12
+# def downloadImages():
+#     global count
+#     count = 12
 
-downloadImages()
-print(count)
+# downloadImages()
+# print(count)
+
+# date = ["09","12", "2025"]
+# d1 = datetime.date(int(date[2]), int(date[1]), int(date[0]))
+
+# with open('date.txt', 'r+') as f:
+#     line = f.readline()
+#     line = line.split("/")
+#     d2 = datetime.date(int(line[2]), int(line[1]), int(line[0]))
+
+#     if (d1>d2):
+#         with open('date.txt', 'w') as file:
+#             file.write(d1.strftime("%d/%m/%Y"))   
+        
+    
