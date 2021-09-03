@@ -1,6 +1,7 @@
 url.txt
 /images/
-test.pyloginData.pickle
+test.py
+loginData.pickle
 certifi.cer
 certifi2.cer
 certifi3.cer
