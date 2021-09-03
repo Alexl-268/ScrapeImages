@@ -3,6 +3,7 @@ import winsound
 import requests
 from bs4 import BeautifulSoup as bs
 import datetime
+import pickle
 
 updatedDate = ''
 with open('date.txt', 'r+') as f:
@@ -14,18 +15,12 @@ links = userInput.split(", ")
 links = links[0: len(links)-1]
 scraped = []
 
-url = 'https://www.lmmpic.com'
+with open('loginData.pickle', 'rb') as f:
+    url = pickle.load(f)
+    login = pickle.load(f)
+    header = pickle.load(f)
+    login_payload = pickle.load(f)
 
-login = '/wp-login.php'
-header = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
-    'origin': url,
-    'referer': url+login}
-login_payload = {
-    'log': 'sdfgkjhg1@gmail.com',
-    'pwd': 'l0maNdr@',
-    'testcookie': '1',
-    'wp-submit': '登录',}
 s = requests.session()
 login_req = s.post(url+login, headers=header, data=login_payload)
 print(login_req)
