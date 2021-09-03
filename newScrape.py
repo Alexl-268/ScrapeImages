@@ -12,6 +12,7 @@ with open('date.txt', 'r+') as f:
 userInput = input("Please enter links after date - " + updatedDate + ": ")
 links = userInput.split(", ")
 links = links[0: len(links)-1]
+scraped = []
 
 url = 'https://www.lmmpic.com'
 
@@ -57,6 +58,12 @@ def downloadImages(url, th):
             with open('date.txt', 'w') as file:
                 file.write(d1.strftime("%d/%m/%Y"))
 
+    with open('url.txt', 'r+') as f:
+        if (pureUrl in f.read()):
+            scraped.append(pureUrl)
+            return th + 1
+        else:
+            f.write("\n"+pureUrl)
 
     count = 1
     while (visited == False):
@@ -77,12 +84,16 @@ def downloadImages(url, th):
         if (scrapeUrl == pureUrl):
             visited = True
 
-    return th+1
+    return th + 1
 
 
 count = 1
 for url in links:
     count = downloadImages(url, count)
+
+for skipped in scraped:
+    print("Already scrapped-------------------------------------------------------" + skipped)
+
 
 
 duration = 400  # milliseconds

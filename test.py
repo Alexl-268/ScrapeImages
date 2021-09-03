@@ -37,4 +37,10 @@ import datetime
 #         with open('date.txt', 'w') as file:
 #             file.write(d1.strftime("%d/%m/%Y"))   
         
-    
+with open('url.txt', 'r+') as f:
+    url = 'https://www.lmmpic.com/1027041.shtml'
+    if (url in f.read()):
+        print("exist")
+    else:
+        print("no")
+        f.write("yes")
